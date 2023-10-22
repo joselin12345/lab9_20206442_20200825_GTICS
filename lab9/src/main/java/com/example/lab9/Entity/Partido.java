@@ -1,5 +1,7 @@
 package com.example.lab9.Entity;
 
+import com.example.lab9.Entity.Deporte;
+import com.example.lab9.Entity.Equipo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -32,5 +34,10 @@ public class Partido {
     @NotNull
     @Column(name = "scoreB", nullable = false)
     private Integer scoreB;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "deporte_iddeporte", nullable = false)
+    private Deporte deporteIddeporte;
 
 }

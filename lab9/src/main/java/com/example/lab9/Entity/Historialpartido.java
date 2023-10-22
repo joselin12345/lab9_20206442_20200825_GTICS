@@ -23,10 +23,6 @@ public class Historialpartido {
     @JoinColumn(name = "partido_idpartido", nullable = false)
     private Partido partidoIdpartido;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "deporte_iddeporte", nullable = false)
-    private Deporte deporteIddeporte;
 
     @NotNull
     @Column(name = "horaFecha", nullable = false)

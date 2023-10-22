@@ -2,6 +2,7 @@ package com.example.lab9.Controllers;
 
 import com.example.lab9.Entity.*;
 import com.example.lab9.Repository.*;
+import com.example.lab9.dtos.ParticipantesPartidoDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,36 +90,32 @@ public class SDCIController {
     //                ACTIVIDAD 2
 
     // a) REGISTRO PARTIDOS Y EN LA TABLA HISTORIAL
-
     @PostMapping( "/partido/registro")
-    public ResponseEntity<HashMap<String, Object>> guardarPartido(
-            @RequestBody Map<String, Object> jsonData,
+    public ResponseEntity<HashMap<String, Object>> registrarPartido(
+            @RequestBody Partido partido,
             @RequestParam(value = "fetchId", required = false) boolean fetchId) {
 
         HashMap<String, Object> responseJson = new HashMap<>();
 
-        Map<String, Object> partidoData = (Map<String, Object>) jsonData.get("partido");
+        //System.out.printf(partido.getEquipoA().getNombreEquipo());
+        //System.out.printf(partido.getEquipoB().getNombreEquipo());
+        //System.out.printf(Integer.toString(partido.getScoreA()));
+        //System.out.printf(Integer.toString(partido.getScoreB()));
+        //System.out.printf(Integer.toString((partido.getDeporteIddeporte().getIddeporte())));
 
-        Partido partido = new Partido();
-        partido.setEquipoA((Equipo) partidoData.get("equipoA"));
-        partido.setEquipoB((Equipo) partidoData.get("equipoB"));
-        partido.setScoreA((int) partidoData.get("scoreA"));
-        partido.setScoreB((int) partidoData.get("scoreB"));
+
+
         partidoRepository.save(partido);
+        histoalpartidoRepository.guardarEnHistorial(partido.getIdpartido());
 
-        Map<String, Object> historialpartidoData = (Map<String, Object>) jsonData.get("historialpartido");
-        Historialpartido historialpartido = new Historialpartido();
-        historialpartido.setPartidoIdpartido(partido);
-        historialpartido.setDeporteIddeporte((Deporte) historialpartidoData.get("deporte_iddeporte"));
-        historialpartido.setHoraFecha((Date) historialpartidoData.get("horaFecha"));
-        histoalpartidoRepository.save(historialpartido);
 
         if (fetchId) {
             responseJson.put("id", partido.getIdpartido());
         }
-        responseJson.put("estado", "Creado exitosamente");
+        responseJson.put("estado", "Partido registrado y añadido a historial");
+
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);
-    }
+}
 
     // b) LISTA PARTICPANTES DE UN PARTIDO GENERAL
     // b.1)
@@ -130,15 +127,18 @@ public class SDCIController {
     // LISTA DE PARICIPANTES DE UN PARTIDO SI SE INDICA UNO DE LOS EQUIPOS JUGADORES
     // b.2)
     @GetMapping("/partido/getparticipantes/{idequipo}")
-    public List<Participantespartido> buscarparticipantes(@PathVariable("idequipo") int idequipo) {
+    public ResponseEntity<List<ParticipantesPartidoDTO>> buscarparticipantes(@PathVariable("idequipo") int idequipo) {
+        System.out.println(Integer.toString(idequipo));
+        Optional<Equipo> equipoOptional = equipoRepository.findById(idequipo);
 
-        Optional<Equipo> byId = equipoRepository.findById(idequipo);
-        if (byId.isPresent()) {
-            return participantespartidoRepository.participantePartido();
+        if (equipoOptional.isPresent()) {
+            List<ParticipantesPartidoDTO> participantes = participantespartidoRepository.participantePartido(idequipo);
+            return ResponseEntity.ok(participantes);
         } else {
-            return null;
+            return ResponseEntity.notFound().build();
         }
     }
+
 
     // c) HISTOROIAL DE PARTIDO GENERAL
     // c.1)
