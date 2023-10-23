@@ -17,17 +17,17 @@ public class Participantespartido {
     private Integer idparticipantesPartido;
 
     @NotNull
+    @Column(name = "horaFecha", nullable = false)
+    private Instant horaFecha;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "partido_idpartido", nullable = false)
-    private Partido partidoIdpartido;
+    private Partido partido_idpartido;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "participante_idparticipante", nullable = false)
-    private Participante participanteIdparticipante;
-
-    @NotNull
-    @Column(name = "horaFecha", nullable = false)
-    private Instant horaFecha;
+    private Participante participante_idparticipante;
 
 }

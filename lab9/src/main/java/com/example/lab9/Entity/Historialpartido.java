@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -14,18 +13,16 @@ import java.util.Date;
 @Table(name = "historialpartidos", schema = "partidossdci")
 public class Historialpartido {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idhistorialPartidos", nullable = false)
     private Integer idhistorialPartidos;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "partido_idpartido", nullable = false)
-    private Partido partidoIdpartido;
-
+    @Column(name = "horaFecha", nullable = false)
+    private Instant horaFecha;
 
     @NotNull
-    @Column(name = "horaFecha", nullable = false)
-    private Date horaFecha;
-
+    @ManyToOne
+    @JoinColumn(name = "partido_idpartido", nullable = false)
+    private Partido partido_idpartido;
 }
